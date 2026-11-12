@@ -175,6 +175,39 @@
   dialog h2{margin:0;font:800 22px/1.15 var(--sans);letter-spacing:-.01em}
   dialog p{margin:0;font-size:14px;line-height:1.45;color:var(--tinta2)}
 
+  /* ===== Registrar serviço ===== */
+  .fab{position:fixed;right:max(16px,calc(50vw - 264px));bottom:calc(20px + env(safe-area-inset-bottom));z-index:4;height:56px;padding:0 18px;display:flex;align-items:center;gap:8px;
+       background:var(--cobalto);color:#FFFFFF;border:1.5px solid var(--tinta);border-radius:3px;font:700 15px var(--sans);cursor:pointer;box-shadow:3px 3px 0 var(--tinta)}
+  @media (prefers-color-scheme: dark){ .fab{background:#2340A8} }
+  .conteudo.com-fab{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+  .topo-reg{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;border-bottom:1px solid var(--linha);background:var(--papel)}
+  .topo-reg h1{font-size:20px}
+  .reg{flex:1;padding:16px;display:flex;flex-direction:column;gap:16px}
+  .rotulo-campo{font:600 12px var(--mono);color:var(--cinza)}
+  .grade-el{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .el-toggle{aspect-ratio:1;border:1.5px solid;border-radius:3px;position:relative;display:grid;place-items:center;cursor:pointer;padding:0}
+  .el-toggle[aria-pressed="true"]{border-width:2.5px}
+  .el-toggle small{position:absolute;top:3px;left:5px;font:500 9px var(--mono)}
+  .el-toggle b{font:800 22px/1 var(--sans)}
+  .el-toggle em{position:absolute;bottom:3px;left:5px;right:3px;font:500 9px var(--mono);font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+  .linhas{border:1.5px solid var(--tinta);border-radius:3px;background:var(--cartao)}
+  .linha-item{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-bottom:1px solid var(--linha)}
+  .linha-topo{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .linha-topo span{font:600 11px var(--mono);color:var(--cinza)}
+  .linha-topo button{width:44px;height:36px;margin:-6px -10px -6px 0;border:0;background:none;color:var(--cinza);cursor:pointer;display:grid;place-items:center}
+  .linha-item input{width:100%;min-width:0;min-height:44px;padding:0 10px;border:1.5px solid var(--tinta);border-radius:3px;background:var(--cartao);font-size:15px}
+  .linha-nums{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:8px;align-items:end}
+  .linha-nums label{display:flex;flex-direction:column;gap:4px;font:500 11px var(--mono);color:var(--cinza)}
+  .linha-nums input{font:500 15px var(--mono)}
+  .linha-total{font:500 14px var(--mono);min-height:44px;display:flex;align-items:center;justify-content:flex-end;min-width:86px}
+  .add-linhas{display:grid;grid-template-columns:1fr 1fr}
+  .add-linhas button{min-height:48px;border:0;background:none;color:var(--cobalto);font:600 14px var(--sans);cursor:pointer}
+  .add-linhas button+button{border-left:1px solid var(--linha)}
+  .total{display:flex;justify-content:space-between;align-items:baseline;padding-top:4px}
+  .total b{font:600 20px var(--mono)}
+  .rodape-reg{position:sticky;bottom:0;padding:12px 16px calc(16px + env(safe-area-inset-bottom));border-top:1.5px solid var(--tinta);background:var(--papel)}
+  .botao.cobalto{background:#2340A8;color:#FFFFFF;border:1.5px solid var(--tinta)}
+
   /* ===== Erlenmeyer ===== */
   .liquido{fill:var(--cobalto);transition:transform .7s cubic-bezier(.3,.7,.3,1)}
   .contorno{fill:none;stroke:var(--tinta);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
@@ -303,7 +336,7 @@
     <span class="placa" id="placa-topo" aria-label="Placa"><i></i><span></span></span>
   </header>
 
-  <main class="conteudo">
+  <main class="conteudo com-fab">
     <div class="titulo-carro"><h1 id="carro-nome"></h1><span id="carro-modelo"></span></div>
     <section id="card-rodizio" aria-label="Rodízio"></section>
     <section class="cartao" aria-label="Odômetro">
@@ -315,6 +348,10 @@
     <ul class="lista" id="lista-cats"></ul>
     <p class="aviso-cet">O aviso de rodízio é informativo e não considera feriados nem mudanças da Prefeitura. Na dúvida, confirme com a CET.</p>
   </main>
+
+  <button class="fab" id="btn-registrar" type="button">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Registrar serviço
+  </button>
 
   <div class="menu" id="menu" hidden>
     <nav aria-label="Menu">
@@ -358,6 +395,46 @@
   </dialog>
 </div>
 
+
+<!-- ============ REGISTRAR SERVIÇO ============ -->
+<div class="app" id="tela-registrar" hidden>
+  <header class="topo-reg">
+    <button class="icone" id="btn-voltar-painel" type="button" aria-label="Voltar ao painel">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <h1>Registrar serviço</h1>
+  </header>
+  <form class="reg" id="form-servico" novalidate>
+    <div class="dupla">
+      <div class="campo"><label for="s-data" class="rotulo-campo">Data</label><input id="s-data" type="date"></div>
+      <div class="campo"><label for="s-km" class="rotulo-campo">Km no dia</label><input id="s-km" class="mono" inputmode="numeric" autocomplete="off"></div>
+    </div>
+    <div class="campo"><label for="s-oficina" class="rotulo-campo">Oficina</label><input id="s-oficina" maxlength="80" autocomplete="off" placeholder="Ex.: Auto Center Paulista"></div>
+
+    <fieldset style="border:0;padding:0;display:flex;flex-direction:column;gap:8px">
+      <legend class="rotulo-campo" style="margin-bottom:8px">O que foi feito (toque para marcar)</legend>
+      <div class="grade-el" id="s-elementos"></div>
+    </fieldset>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="rotulo-campo" id="rot-linhas">Peças e serviços</span>
+      <div class="linhas" role="group" aria-labelledby="rot-linhas">
+        <div id="s-linhas"></div>
+        <div class="add-linhas">
+          <button type="button" data-add="peca">+ peça</button>
+          <button type="button" data-add="mao_de_obra">+ mão de obra</button>
+        </div>
+      </div>
+      <div class="total"><span class="rotulo-campo">TOTAL</span><b id="s-total">R$ 0,00</b></div>
+    </div>
+
+    <div class="campo"><label for="s-obs" class="rotulo-campo">Observação (opcional)</label><input id="s-obs" maxlength="200" autocomplete="off" placeholder="Ex.: nº da OS, garantia de 6 meses"></div>
+    <p class="pequeno" id="s-dica" style="text-align:left"></p>
+    <div class="erro" id="erro-servico" role="alert" hidden></div>
+  </form>
+  <div class="rodape-reg"><button class="botao cobalto" id="btn-salvar-servico" type="button">Salvar serviço</button></div>
+</div>
+
 <script>
 /* ==========================================================
    CONFIGURAÇÃO
@@ -387,7 +464,7 @@ const DIAS_RODIZIO = { 1:'segundas', 2:'segundas', 3:'terças', 4:'terças', 5:'
 
 /* ---------- utilidades ---------- */
 const $ = (id) => document.getElementById(id);
-const TELAS = ['carregando','entrar','sem-convite','etapa1','etapa2','painel'];
+const TELAS = ['carregando','entrar','sem-convite','etapa1','etapa2','painel','registrar'];
 let usuario = null;
 
 function mostrar(nome){
@@ -899,6 +976,158 @@ $('btn-apagar-ultima').addEventListener('click', async () => {
 });
 let confirmarApagar = false;
 $('dlg-ultima').addEventListener('close', () => { confirmarApagar = false; $('btn-apagar-ultima').textContent = 'Apagar este registro'; });
+
+
+/* ==========================================================
+   REGISTRAR SERVIÇO
+   ========================================================== */
+let marcadosReg = new Set();
+let linhasReg = [];              // { tipo, nome, qtd, preco }
+let kmAltoServicoOk = null;
+
+function lerValor(v){ // "1.219,90" -> 1219.9
+  const t = String(v).trim().replace(/[^\d,.-]/g, '');
+  if (!t) return 0;
+  const n = t.includes(',') ? Number(t.replace(/\./g, '').replace(',', '.')) : Number(t);
+  return isFinite(n) ? n : 0;
+}
+function brl(n){ return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+function totalLinha(l){ return Math.round(lerValor(l.qtd || '1') * lerValor(l.preco) * 100) / 100; }
+
+function desenharElementosReg(){
+  $('s-elementos').innerHTML = painel.cats.map((c, i) => {
+    const ap = aparencia(c, i);
+    const on = marcadosReg.has(c.id);
+    const curto = c.nome.replace(/^Troca de /, '').replace(/ \(.*\)$/, '').replace('Alinhamento e balanceamento', 'Alinham.').replace(/^./, m => m.toUpperCase());
+    return '<button type="button" class="el-toggle" data-el="' + c.id + '" aria-pressed="' + on + '" aria-label="' + esc(c.nome) + '" ' +
+      'style="border-color:' + ap.cor + ';background:' + (on ? ap.cor : ap.fundo) + ';color:' + (on ? '#FFFFFF' : ap.cor) + '">' +
+      '<small>' + ap.n + '</small><b>' + esc(ap.sim) + '</b><em>' + esc(curto) + '</em></button>';
+  }).join('');
+}
+function desenharLinhasReg(){
+  $('s-linhas').innerHTML = linhasReg.map((l, i) =>
+    '<div class="linha-item" data-linha="' + i + '">' +
+      '<div class="linha-topo"><span>' + (l.tipo === 'peca' ? 'PEÇA' : 'MÃO DE OBRA') + '</span>' +
+        '<button type="button" data-remover="' + i + '" aria-label="Remover linha ' + (i + 1) + '">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
+      '<input data-campo="nome" value="' + esc(l.nome) + '" maxlength="80" aria-label="Descrição" placeholder="' + (l.tipo === 'peca' ? 'Ex.: Filtro de óleo' : 'Ex.: Troca de óleo') + '">' +
+      '<div class="linha-nums">' +
+        '<label>Qtd<input data-campo="qtd" inputmode="decimal" value="' + esc(l.qtd) + '"></label>' +
+        '<label>Valor unitário (R$)<input data-campo="preco" inputmode="decimal" value="' + esc(l.preco) + '" placeholder="0,00"></label>' +
+        '<span class="linha-total" data-total>' + brl(totalLinha(l)) + '</span>' +
+      '</div></div>').join('');
+  atualizarTotalReg();
+}
+function atualizarTotalReg(){
+  $('s-total').textContent = brl(linhasReg.reduce((t, l) => t + totalLinha(l), 0));
+  const nomes = painel.cats.filter(c => marcadosReg.has(c.id)).map(c => c.nome);
+  const km = lerKm($('s-km').value);
+  $('s-dica').textContent = nomes.length
+    ? 'Ao salvar, ' + (nomes.length === 1 ? nomes[0] + ' volta' : nomes.slice(0, -1).join(', ') + ' e ' + nomes[nomes.length - 1] + ' voltam') +
+      ' a contar a partir de ' + (km ? num(km) + ' km' : 'hoje') + '.'
+    : 'Marque os itens acima para o painel recomeçar a contagem deles.';
+}
+
+function abrirRegistrar(){
+  marcadosReg = new Set(); linhasReg = []; kmAltoServicoOk = null;
+  $('s-data').value = hojeStr(); $('s-data').max = hojeStr();
+  $('s-km').value = formatarKm(painel.carro.km_atual || '');
+  $('s-oficina').value = ''; $('s-obs').value = '';
+  erro('erro-servico');
+  $('btn-salvar-servico').textContent = 'Salvar serviço';
+  desenharElementosReg(); desenharLinhasReg();
+  mostrar('registrar');
+}
+function formularioMexido(){
+  return marcadosReg.size || linhasReg.length || $('s-oficina').value.trim() || $('s-obs').value.trim();
+}
+$('btn-registrar').addEventListener('click', abrirRegistrar);
+$('btn-voltar-painel').addEventListener('click', () => {
+  if (formularioMexido() && !confirm('Descartar este serviço? O que você preencheu não será salvo.')) return;
+  mostrar('painel');
+});
+$('s-elementos').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-el]'); if (!b) return;
+  const id = b.dataset.el;
+  marcadosReg.has(id) ? marcadosReg.delete(id) : marcadosReg.add(id);
+  desenharElementosReg(); atualizarTotalReg();
+});
+document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+  linhasReg.push({ tipo: b.dataset.add, nome: '', qtd: '1', preco: '' });
+  desenharLinhasReg();
+  const ult = $('s-linhas').lastElementChild; if (ult) ult.querySelector('[data-campo="nome"]').focus();
+}));
+$('s-linhas').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-remover]'); if (!b) return;
+  linhasReg.splice(Number(b.dataset.remover), 1); desenharLinhasReg();
+});
+$('s-linhas').addEventListener('input', (e) => {
+  const campo = e.target.dataset.campo, linha = e.target.closest('[data-linha]');
+  if (!campo || !linha) return;
+  const l = linhasReg[Number(linha.dataset.linha)];
+  l[campo] = e.target.value;
+  linha.querySelector('[data-total]').textContent = brl(totalLinha(l));
+  atualizarTotalReg();
+});
+$('s-km').addEventListener('input', (e) => { e.target.value = formatarKm(e.target.value); kmAltoServicoOk = null; $('btn-salvar-servico').textContent = 'Salvar serviço'; atualizarTotalReg(); });
+
+$('btn-salvar-servico').addEventListener('click', async () => {
+  erro('erro-servico');
+  const data = $('s-data').value;
+  const km = lerKm($('s-km').value);
+  const atual = painel.carro.km_atual || 0;
+  const linhas = linhasReg.filter(l => l.nome.trim() || lerValor(l.preco));
+  if (!data) { erro('erro-servico', 'Informe a data do serviço.'); return; }
+  if (data > hojeStr()) { erro('erro-servico', 'A data não pode ser no futuro.'); return; }
+  if (!km) { erro('erro-servico', 'Informe o km do carro no dia do serviço.'); $('s-km').focus(); return; }
+  if (!marcadosReg.size && !linhas.length) { erro('erro-servico', 'Marque o que foi feito ou adicione pelo menos uma peça ou mão de obra.'); return; }
+  if (linhas.some(l => !l.nome.trim())) { erro('erro-servico', 'Dê uma descrição para cada linha de peça ou mão de obra.'); return; }
+  if (km > atual + 5000 && kmAltoServicoOk !== km) {
+    kmAltoServicoOk = km;
+    avisar('erro-servico', '▲ Esse km é bem maior que o atual do carro (' + num(atual) + '). Se estiver certo, toque em "Salvar mesmo assim".');
+    $('btn-salvar-servico').textContent = 'Salvar mesmo assim';
+    return;
+  }
+
+  const btn = $('btn-salvar-servico');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  let servicoId = null;
+  try {
+    const { data: novo, error: e1 } = await sb.from('servicos').insert({
+      carro_id: painel.carro.id, data, km,
+      oficina: $('s-oficina').value.trim(),
+      observacao: $('s-obs').value.trim(),
+      categoria_ids: [...marcadosReg]
+    }).select('id').single();
+    if (e1) throw e1;
+    servicoId = novo.id;
+    if (linhas.length) {
+      const { error: e2 } = await sb.from('servico_itens').insert(linhas.map((l, i) => ({
+        servico_id: servicoId, tipo: l.tipo, nome: l.nome.trim(),
+        quantidade: lerValor(l.qtd || '1') || 1, preco_unitario: lerValor(l.preco), ordem: i + 1
+      })));
+      if (e2) throw e2;
+    }
+    if (km > atual) {
+      const agora = new Date().toISOString();
+      const { error: e3 } = await sb.from('carros').update({ km_atual: km, km_atual_data: data, atualizado_em: agora }).eq('id', painel.carro.id);
+      if (e3) throw e3;
+      await sb.from('km_registros').insert({ carro_id: painel.carro.id, data, km });
+    }
+    await carregarPainel(painel.carro.id, true);
+    marcarSalvo();
+  } catch (err) {
+    console.error(err);
+    if (servicoId) { // desfaz o serviço pela metade para não duplicar ao tentar de novo
+      const agora = new Date().toISOString();
+      await sb.from('servicos').update({ apagado_em: agora, atualizado_em: agora }).eq('id', servicoId);
+    }
+    erro('erro-servico', 'Não deu para salvar agora. Confira a internet e toque em "Salvar serviço" de novo.');
+  } finally {
+    btn.disabled = false;
+    if (btn.textContent === 'Salvando…') btn.textContent = 'Salvar serviço';
+  }
+});
 
 /* ---------- início ---------- */
 let decidido = false;
