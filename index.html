@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F3F1EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1013" media="(prefers-color-scheme: dark)">
+<title>Chemical Garage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Azeret+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  /* ===== Cores do tema Laboratório (claro e escuro) ===== */
+  :root{
+    --papel:#F3F1EA; --tinta:#17191C; --tinta2:#3A3D42; --cinza:#575B62;
+    --linha:#D4D0C3; --linha2:#E4E1D8; --cartao:#FFFFFF;
+    --cobalto:#2340A8; --risco:#B3261E;
+    --atencao-borda:#8C5400; --atencao-fundo:#F7EBCB; --atencao-texto:#6E4200;
+    --botao-fundo:#17191C; --botao-texto:#F3F1EA;
+    --mono:'Azeret Mono',ui-monospace,monospace;
+    --sans:'Schibsted Grotesk',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --papel:#0E1013; --tinta:#ECEAE3; --tinta2:#C9C6BD; --cinza:#A3A39C;
+      --linha:#3A3D42; --linha2:#2A2D32; --cartao:#17191C;
+      --cobalto:#93A8FF; --risco:#FF8A80;
+      --atencao-borda:#E0A84A; --atencao-fundo:#2E2414; --atencao-texto:#F2C77A;
+      --botao-fundo:#ECEAE3; --botao-texto:#0E1013;
+    }
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html,body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--sans)}
+  input,button,select{font:inherit;color:inherit}
+  a{color:var(--cobalto)}
+  .tela{min-height:100dvh;max-width:440px;margin:0 auto;display:flex;flex-direction:column;
+        padding:calc(32px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));gap:20px}
+  .tela[hidden]{display:none}
+  .marca{display:flex;align-items:center;gap:12px}
+  .simbolo{width:52px;height:52px;border:2.5px solid var(--tinta);border-radius:3px;position:relative;display:grid;place-items:center;background:var(--cartao)}
+  .simbolo small{position:absolute;top:3px;left:5px;font:500 9px var(--mono)}
+  .simbolo b{font:800 24px/1 var(--sans)}
+  .marca span{font:800 22px/1 var(--sans);letter-spacing:-.02em}
+  h1{margin:0;font:800 30px/1.08 var(--sans);letter-spacing:-.025em}
+  .grande{font-size:38px;line-height:1.05}
+  .texto{margin:0;font-size:15px;line-height:1.5;color:var(--tinta2)}
+  .rotulo{font:500 12px var(--mono);color:var(--cinza)}
+  .selo{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:5px 9px;border-radius:3px;font:600 12px var(--mono)}
+  .selo-beta{border:1.5px solid var(--cobalto);color:var(--cobalto)}
+  .selo-atencao{border:1.5px solid var(--atencao-borda);background:var(--atencao-fundo);color:var(--atencao-texto)}
+  .rodape{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+  .botao{min-height:56px;display:flex;align-items:center;justify-content:center;gap:12px;border-radius:3px;
+         font:700 17px var(--sans);text-decoration:none;cursor:pointer;border:0;background:var(--botao-fundo);color:var(--botao-texto);width:100%}
+  .botao.secundario{background:var(--cartao);color:var(--tinta);border:1.5px solid var(--tinta);font-size:16px}
+  .botao:disabled{opacity:.55;cursor:wait}
+  .pequeno{margin:0;font-size:13px;line-height:1.5;color:var(--cinza);text-align:center}
+  .caixa{padding:12px 14px;background:var(--cartao);border:1px solid var(--linha);border-radius:3px;display:flex;flex-direction:column;gap:4px}
+  .caixa b{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+  .caixa span{font:500 15px var(--mono);word-break:break-all}
+  form{display:flex;flex-direction:column;gap:16px;margin:0}
+  .campo{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .campo label{font:600 14px var(--sans)}
+  .campo input{width:100%;min-width:0;min-height:48px;padding:0 14px;background:var(--cartao);border:1.5px solid var(--tinta);border-radius:3px;font-size:16px}
+  .campo input.mono{font:500 16px var(--mono)}
+  .dupla{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+  fieldset{margin:0;min-width:0}
+  .grupo{padding:14px 16px;border:1px solid var(--linha);border-radius:3px;background:var(--cartao);display:flex;flex-direction:column;gap:10px}
+  .grupo legend{padding:0 6px;font:600 14px var(--sans)}
+  .opcao{display:flex;align-items:center;gap:10px;min-height:32px;font-size:15px;cursor:pointer}
+  .opcao input{width:20px;height:20px;accent-color:var(--cobalto);flex:none}
+  .dica{font:500 13px var(--mono);color:var(--cobalto)}
+  .divisor{height:1px;background:var(--linha2)}
+  .etapa{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .itens{border:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .item{display:flex;align-items:center;gap:12px;min-height:54px;padding:5px 12px 5px 5px;background:var(--cartao);border:1px solid var(--linha);border-radius:3px;cursor:pointer}
+  .item .el{flex:none;width:44px;height:44px;border:1.5px solid;border-radius:3px;display:grid;place-items:center;font:800 17px/1 var(--sans)}
+  .item .nome{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .item .nome b{font:600 15px var(--sans)}
+  .item .nome small{font:500 12px var(--mono);color:var(--cinza)}
+  .item input{flex:none;width:22px;height:22px;accent-color:var(--cobalto)}
+  .acoes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px}
+  .erro{padding:12px 14px;border:1.5px solid var(--risco);border-radius:3px;font-size:14px;line-height:1.45}
+  .erro[hidden]{display:none}
+  .visivel-so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* ===== Erlenmeyer ===== */
+  .liquido{fill:var(--cobalto);transition:transform .7s cubic-bezier(.3,.7,.3,1)}
+  .contorno{fill:none;stroke:var(--tinta);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+  .carregando{flex:1;display:grid;place-items:center;align-content:center;gap:14px}
+  .carregando .liquido{animation:encher 1.6s ease-in-out infinite}
+  @keyframes encher{0%{transform:translateY(16px)}60%,100%{transform:translateY(0)}}
+  @media (prefers-reduced-motion: reduce){
+    .liquido{transition:none}
+    .carregando .liquido{animation:none;transform:translateY(8px)}
+  }
+</style>
+</head>
+<body>
+
+<!-- Molde do erlenmeyer (reaproveitado em todas as telas) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="corpo-frasco"><path d="M10.2 10 L3.6 22.6 Q2.6 26 5.6 26 H18.4 Q21.4 26 20.4 22.6 L13.8 10 Z"/></clipPath>
+  </defs>
+</svg>
+
+<!-- ============ CARREGANDO ============ -->
+<main class="tela" id="tela-carregando" aria-busy="true">
+  <div class="carregando">
+    <svg width="60" height="70" viewBox="0 0 24 28" role="img" aria-label="Carregando">
+      <g clip-path="url(#corpo-frasco)"><rect class="liquido" x="0" y="10" width="24" height="18"/></g>
+      <path class="contorno" d="M8.6 2 H15.4 M10.2 2 V10 L3.6 22.6 Q2.6 26 5.6 26 H18.4 Q21.4 26 20.4 22.6 L13.8 10 V2"/>
+    </svg>
+    <span class="rotulo">Preparando a garagem…</span>
+  </div>
+</main>
+
+<!-- ============ 1 · ENTRAR ============ -->
+<main class="tela" id="tela-entrar" hidden>
+  <div class="marca"><div class="simbolo"><small>01</small><b>Cg</b></div><span>Chemical Garage</span></div>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px">
+    <span class="selo selo-beta">BETA FECHADO · SÓ CONVIDADOS</span>
+    <h1 class="grande">Manutenção. Documentos. Rodízio.<br><br>Seu carro.<br>Num só lugar.</h1>
+  </div>
+  <div class="erro" id="erro-entrar" role="alert" hidden></div>
+  <div class="rodape">
+    <button class="botao" id="btn-google" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3zM12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22zM6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14zM12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"/></svg>
+      Entrar com Google
+    </button>
+    <p class="pequeno">Ao entrar, você concorda com os <a href="termos.html">Termos de uso</a> e a <a href="privacidade.html">Política de privacidade</a>. Não guardamos sua senha nem o motivo de isenções.</p>
+  </div>
+</main>
+
+<!-- ============ 2 · E-MAIL FORA DA LISTA ============ -->
+<main class="tela" id="tela-sem-convite" hidden>
+  <div class="marca"><div class="simbolo"><small>01</small><b>Cg</b></div><span>Chemical Garage</span></div>
+  <div style="display:flex;flex-direction:column;gap:16px;margin-top:24px">
+    <span class="selo selo-atencao"><svg width="13" height="12" viewBox="0 0 13 12" aria-hidden="true"><path d="M6.5 1L12 11H1z" fill="currentColor"/></svg>CONVITE PENDENTE</span>
+    <h1 style="font-size:34px">Seu e-mail ainda não está na lista do beta.</h1>
+    <div class="caixa"><b>Você entrou como</b><span id="email-sem-convite"></span></div>
+    <p class="texto" style="font-size:16px">O beta é fechado: só entram os e-mails convidados. Se você recebeu o convite com outro e-mail, troque de conta. Se ainda não recebeu, é só pedir.</p>
+  </div>
+  <div class="rodape">
+    <a class="botao" id="btn-pedir-convite" href="mailto:chemical13.apps+garage@gmail.com?subject=Convite%20para%20o%20beta%20do%20Chemical%20Garage">Pedir convite por e-mail</a>
+    <button class="botao secundario" id="btn-outra-conta" type="button">Entrar com outra conta Google</button>
+    <p class="pequeno">Enquanto o convite não chega, o app não guarda nenhum dado de carro seu.</p>
+  </div>
+</main>
+
+<!-- ============ 3 · PRIMEIRO ACESSO · ETAPA 1 ============ -->
+<main class="tela" id="tela-etapa1" hidden>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="etapa"><span class="rotulo">PRIMEIRO ACESSO · ETAPA 1 DE 2</span><span data-frasco></span></div>
+    <h1>Olá, <span id="nome-usuario">tudo bem</span>.<br>Qual é o seu carro?</h1>
+    <p class="texto">Dê um nome pro seu carro.<br>Ah! E você pode mudá-lo depois!</p>
+  </div>
+  <form id="form-carro" novalidate>
+    <div class="campo"><label for="f-apelido">Apelido do carro</label><input id="f-apelido" maxlength="40" autocomplete="off" placeholder="Ex.: Ka" required></div>
+    <div class="campo"><label for="f-modelo">Modelo e ano</label><input id="f-modelo" maxlength="80" autocomplete="off" placeholder="Ex.: Ford Ka SE Plus 2019/2020"></div>
+    <div class="dupla">
+      <div class="campo"><label for="f-placa">Placa</label><input id="f-placa" class="mono" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC1D23" style="text-transform:uppercase"></div>
+      <div class="campo"><label for="f-km">Km atual</label><input id="f-km" class="mono" inputmode="numeric" autocomplete="off" placeholder="0"></div>
+    </div>
+    <fieldset class="grupo">
+      <legend>Rodízio</legend>
+      <label class="opcao"><input type="radio" name="rodizio" value="sp" checked>Cidade de São Paulo</label>
+      <label class="opcao"><input type="radio" name="rodizio" value="manual">Outra cidade (regra manual)</label>
+      <label class="opcao"><input type="radio" name="rodizio" value="nenhum">Minha cidade não tem rodízio</label>
+      <span class="dica" id="dica-rodizio" aria-live="polite"></span>
+      <div class="divisor"></div>
+      <label class="opcao"><input type="checkbox" id="f-isento">Meu carro é isento de rodízio</label>
+      <div class="campo" id="campo-isento-ate" hidden><label for="f-isento-ate">Isenção válida até</label><input id="f-isento-ate" type="date"></div>
+    </fieldset>
+    <div class="erro" id="erro-etapa1" role="alert" hidden></div>
+  </form>
+  <div class="rodape">
+    <button class="botao" id="btn-continuar" type="button">Continuar</button>
+  </div>
+</main>
+
+<!-- ============ 4 · PRIMEIRO ACESSO · ETAPA 2 ============ -->
+<main class="tela" id="tela-etapa2" hidden>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="etapa"><span class="rotulo">PRIMEIRO ACESSO · ETAPA 2 DE 2</span><span data-frasco></span></div>
+    <h1>O que você quer acompanhar?</h1>
+    <p class="texto">Marque os itens para começar. Os prazos vêm do app atual e você pode mudar ou criar outros depois.</p>
+  </div>
+  <fieldset class="itens" id="lista-itens">
+    <legend class="visivel-so-leitor">Itens de manutenção</legend>
+  </fieldset>
+  <div class="erro" id="erro-etapa2" role="alert" hidden></div>
+  <div class="rodape">
+    <div class="acoes">
+      <button class="botao secundario" id="btn-voltar" type="button">Voltar</button>
+      <button class="botao" id="btn-comecar" type="button">Começar</button>
+    </div>
+  </div>
+</main>
+
+<!-- ============ PAINEL (provisório até a próxima etapa) ============ -->
+<main class="tela" id="tela-painel" hidden>
+  <div class="marca"><div class="simbolo"><small>01</small><b>Cg</b></div><span>Chemical Garage</span></div>
+  <span class="selo selo-beta">LOGIN FUNCIONANDO</span>
+  <h1 id="painel-titulo"></h1>
+  <p class="texto" id="painel-resumo"></p>
+  <p class="texto">O painel completo vem na próxima etapa da fase 2. Por enquanto esta tela só confirma que o login e o cadastro gravaram no banco.</p>
+  <div class="rodape">
+    <button class="botao secundario" id="btn-sair" type="button">Sair</button>
+  </div>
+</main>
+
+<script>
+/* ==========================================================
+   CONFIGURAÇÃO
+   A chave abaixo é a chave PÚBLICA do Supabase (publishable ou anon).
+   Ela pode ficar no código: quem protege os dados são as regras do
+   banco. NUNCA cole aqui a chave "secret" ou "service_role".
+   ========================================================== */
+const SUPABASE_URL = 'https://jimbnlygvzucrltcxhvn.supabase.co';
+const SUPABASE_CHAVE_PUBLICA = 'sb_publishable_jeAB2qjW77k8e1p36bGnTg_fRTFqDSQ';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_CHAVE_PUBLICA);
+
+/* Itens de manutenção padrão (prazos do app atual) */
+const ITENS_PADRAO = [
+  { sim:'Rv', nome:'Revisão geral',                km:10000, meses:12, cor:'#3F34C2', fundo:'#E0E0FA', marcado:true  },
+  { sim:'Ol', nome:'Troca de óleo',                km:10000, meses:12, cor:'#8C5400', fundo:'#F7EBCB', marcado:true  },
+  { sim:'Fi', nome:'Troca de filtros',             km:10000, meses:12, cor:'#0D6B64', fundo:'#D5F0EC', marcado:true  },
+  { sim:'Al', nome:'Alinhamento e balanceamento',  km:10000, meses:12, cor:'#035E91', fundo:'#D8ECF8', marcado:true  },
+  { sim:'Pn', nome:'Troca de pneus',               km:40000, meses:48, cor:'#54504B', fundo:'#E8E6E3', marcado:true  },
+  { sim:'Fr', nome:'Freios (pastilhas e discos)',  km:20000, meses:null, cor:'#B0123A', fundo:'#FADBE1', marcado:false },
+  { sim:'Su', nome:'Suspensão',                    km:60000, meses:null, cor:'#6424CF', fundo:'#E9DFFB', marcado:false },
+  { sim:'Bt', nome:'Bateria',                      km:null,  meses:24, cor:'#137336', fundo:'#DCF2E3', marcado:true  }
+];
+
+/* Rodízio de São Paulo pelo último número da placa */
+const DIAS_RODIZIO = { 1:'segundas', 2:'segundas', 3:'terças', 4:'terças', 5:'quartas', 6:'quartas', 7:'quintas', 8:'quintas', 9:'sextas', 0:'sextas' };
+
+/* ---------- utilidades ---------- */
+const $ = (id) => document.getElementById(id);
+const TELAS = ['carregando','entrar','sem-convite','etapa1','etapa2','painel'];
+let usuario = null;
+
+function mostrar(nome){
+  TELAS.forEach(t => { $('tela-' + t).hidden = (t !== nome); });
+  window.scrollTo(0, 0);
+}
+function erro(id, msg){ const el = $(id); el.textContent = msg || ''; el.hidden = !msg; }
+function formatarKm(v){ const n = String(v).replace(/\D/g, ''); return n ? Number(n).toLocaleString('pt-BR') : ''; }
+function lerKm(v){ const n = String(v).replace(/\D/g, ''); return n ? Number(n) : 0; }
+function limparPlaca(v){ return String(v).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7); }
+function prazoTexto(i){
+  const km = i.km ? i.km.toLocaleString('pt-BR') + ' km' : '';
+  const ms = i.meses ? i.meses + ' meses' : '';
+  return km && ms ? km + ' ou ' + ms : (km || ms);
+}
+
+/* Frasco das etapas: nivel 0 (vazio) a 1 (cheio) */
+function frascoSVG(rotulo){
+  return '<svg width="30" height="34" viewBox="0 0 24 28" role="img" aria-label="' + rotulo + '">' +
+    '<g clip-path="url(#corpo-frasco)"><rect class="liquido" x="0" y="10" width="24" height="18" style="transform:translateY(16px)"/></g>' +
+    '<path class="contorno" d="M8.6 2 H15.4 M10.2 2 V10 L3.6 22.6 Q2.6 26 5.6 26 H18.4 Q21.4 26 20.4 22.6 L13.8 10 V2"/></svg>';
+}
+document.querySelectorAll('[data-frasco]').forEach((el, i) => {
+  el.innerHTML = frascoSVG(i === 0 ? 'Etapa 1 de 2: frasco pela metade' : 'Etapa 2 de 2: frasco cheio');
+});
+/* Enche o frasco da tela até o nível pedido; parte do nível anterior para animar */
+function encherFrasco(tela, deNivel, paraNivel){
+  const rect = document.querySelector('#tela-' + tela + ' .liquido');
+  if (!rect) return;
+  rect.style.transition = 'none';
+  rect.style.transform = 'translateY(' + (16 * (1 - deNivel)) + 'px)';
+  rect.getBoundingClientRect(); // força o navegador a aplicar o ponto de partida
+  rect.style.transition = '';
+  requestAnimationFrame(() => { rect.style.transform = 'translateY(' + (16 * (1 - paraNivel)) + 'px)'; });
+}
+
+/* ---------- monta a lista de itens da etapa 2 ---------- */
+ITENS_PADRAO.forEach((it, idx) => {
+  const label = document.createElement('label');
+  label.className = 'item';
+  label.innerHTML =
+    '<span class="el" aria-hidden="true" style="border-color:' + it.cor + ';background:' + it.fundo + ';color:' + it.cor + '">' + it.sim + '</span>' +
+    '<span class="nome"><b>' + it.nome + '</b><small>' + prazoTexto(it) + '</small></span>' +
+    '<input type="checkbox" data-item="' + idx + '"' + (it.marcado ? ' checked' : '') + '>';
+  $('lista-itens').appendChild(label);
+});
+
+/* ---------- dica do rodízio ---------- */
+function atualizarDica(){
+  const tipo = document.querySelector('input[name="rodizio"]:checked').value;
+  const isento = $('f-isento').checked;
+  const placa = limparPlaca($('f-placa').value);
+  const final = placa.slice(-1);
+  let dica = '';
+  if (isento) dica = 'Isento: o app não vai avisar rodízio.';
+  else if (tipo === 'nenhum') dica = 'Sem rodízio: o app não vai avisar.';
+  else if (tipo === 'manual') dica = 'Você define os dias depois, em Ajustes.';
+  else if (/\d/.test(final)) dica = 'Final ' + final + ' → rodízio às ' + DIAS_RODIZIO[final] + ', 7–10h e 17–20h';
+  else dica = 'Digite a placa para ver o dia do rodízio.';
+  $('dica-rodizio').textContent = dica;
+  $('campo-isento-ate').hidden = !isento;
+}
+['input','change'].forEach(ev => $('form-carro').addEventListener(ev, atualizarDica));
+$('f-km').addEventListener('input', (e) => { e.target.value = formatarKm(e.target.value); });
+$('f-placa').addEventListener('input', (e) => { e.target.value = limparPlaca(e.target.value); atualizarDica(); });
+
+/* ---------- login ---------- */
+async function entrarComGoogle(trocarConta){
+  erro('erro-entrar');
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: location.origin + location.pathname,
+      queryParams: trocarConta ? { prompt: 'select_account' } : undefined
+    }
+  });
+  if (error) erro('erro-entrar', 'Não foi possível abrir o login do Google. Tente de novo em instantes.');
+}
+$('btn-google').addEventListener('click', () => entrarComGoogle(false));
+$('btn-outra-conta').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  entrarComGoogle(true);
+});
+$('btn-sair').addEventListener('click', async () => { await sb.auth.signOut(); mostrar('entrar'); });
+
+/* ---------- decide para onde a pessoa vai depois do login ---------- */
+async function decidirTela(sessao){
+  if (!sessao) { mostrar('entrar'); return; }
+  usuario = sessao.user;
+  mostrar('carregando');
+
+  const { data: convidado, error: e1 } = await sb.rpc('esta_convidado');
+  if (e1) { mostrar('entrar'); erro('erro-entrar', 'Não conseguimos confirmar seu convite. Verifique a internet e tente de novo.'); return; }
+  if (!convidado) {
+    $('email-sem-convite').textContent = usuario.email || '';
+    mostrar('sem-convite');
+    return;
+  }
+
+  const { data: carros, error: e2 } = await sb.from('carros')
+    .select('id, nome, placa, km_atual').is('apagado_em', null).order('criado_em').limit(1);
+  if (e2) { mostrar('entrar'); erro('erro-entrar', 'Não conseguimos carregar seus dados. Tente de novo.'); return; }
+
+  if (carros.length === 0) {
+    const nome = (usuario.user_metadata && (usuario.user_metadata.full_name || usuario.user_metadata.name)) || '';
+    $('nome-usuario').textContent = nome.split(' ')[0] || 'tudo bem';
+    atualizarDica();
+    mostrar('etapa1');
+    encherFrasco('etapa1', 0, 0.5);
+    return;
+  }
+  abrirPainel(carros[0]);
+}
+
+function abrirPainel(carro){
+  $('painel-titulo').textContent = carro.nome || 'Seu carro';
+  $('painel-resumo').textContent = [carro.placa, (carro.km_atual || 0).toLocaleString('pt-BR') + ' km'].filter(Boolean).join(' · ');
+  mostrar('painel');
+}
+
+/* ---------- etapas do primeiro acesso ---------- */
+$('btn-continuar').addEventListener('click', () => {
+  erro('erro-etapa1');
+  if (!$('f-apelido').value.trim()) { erro('erro-etapa1', 'Dê um apelido para o carro (pode ser só "Meu carro").'); $('f-apelido').focus(); return; }
+  if ($('f-isento').checked && !$('f-isento-ate').value) { erro('erro-etapa1', 'Informe até quando vale a isenção do rodízio.'); $('f-isento-ate').focus(); return; }
+  mostrar('etapa2');
+  encherFrasco('etapa2', 0.5, 1);
+});
+$('btn-voltar').addEventListener('click', () => { mostrar('etapa1'); encherFrasco('etapa1', 1, 0.5); });
+
+let carroCriado = null;
+$('btn-comecar').addEventListener('click', async () => {
+  erro('erro-etapa2');
+  const marcados = [...document.querySelectorAll('[data-item]')].filter(c => c.checked).map(c => ITENS_PADRAO[c.dataset.item]);
+  if (marcados.length === 0) { erro('erro-etapa2', 'Marque pelo menos um item para acompanhar.'); return; }
+
+  const btn = $('btn-comecar');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  try {
+    const tipo = document.querySelector('input[name="rodizio"]:checked').value;
+    const isento = $('f-isento').checked;
+    const hoje = new Date().toISOString().slice(0, 10);
+    const km = lerKm($('f-km').value);
+
+    // Se uma tentativa anterior já criou o carro, reaproveita (evita carro duplicado)
+    if (!carroCriado) {
+    const { data: novo, error: e1 } = await sb.from('carros').insert({
+      nome: $('f-apelido').value.trim(),
+      modelo: $('f-modelo').value.trim(),
+      placa: limparPlaca($('f-placa').value),
+      km_atual: km,
+      km_atual_data: hoje,
+      rodizio_cidade: tipo === 'sp' ? 'sp' : 'outra',
+      rodizio_nao_se_aplica: tipo === 'nenhum',
+      rodizio_isento: isento,
+      rodizio_isento_ate: isento ? $('f-isento-ate').value : null
+    }).select('id, nome, placa, km_atual').single();
+    if (e1) throw e1;
+    carroCriado = novo;
+    }
+    const carro = carroCriado;
+    // apaga itens de uma tentativa anterior que tenha parado no meio
+    await sb.from('categorias').delete().eq('carro_id', carro.id);
+    await sb.from('km_registros').delete().eq('carro_id', carro.id);
+
+    const { error: e2 } = await sb.from('categorias').insert(
+      marcados.map((it, i) => ({ carro_id: carro.id, nome: it.nome, intervalo_km: it.km, intervalo_meses: it.meses, ordem: i + 1 }))
+    );
+    if (e2) throw e2;
+
+    if (km > 0) {
+      const { error: e3 } = await sb.from('km_registros').insert({ carro_id: carro.id, data: hoje, km });
+      if (e3) throw e3;
+    }
+    await sb.from('ajustes').upsert({ user_id: usuario.id }, { onConflict: 'user_id', ignoreDuplicates: true });
+
+    abrirPainel(carro);
+  } catch (e) {
+    console.error(e);
+    erro('erro-etapa2', 'Não deu para salvar agora. Confira a internet e toque em "Começar" de novo.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Começar';
+  }
+});
+
+/* ---------- início ---------- */
+let decidido = false;
+sb.auth.onAuthStateChange((evento, sessao) => {
+  if (evento === 'INITIAL_SESSION' || evento === 'SIGNED_IN') {
+    if (evento === 'SIGNED_IN' && decidido) return; // evita rodar duas vezes
+    decidido = true;
+    setTimeout(() => decidirTela(sessao), 0);
+  }
+  if (evento === 'SIGNED_OUT') { decidido = false; }
+});
+</script>
+</body>
+</html>
