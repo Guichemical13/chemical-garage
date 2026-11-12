@@ -83,6 +83,8 @@
   .acoes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px}
   .erro{padding:12px 14px;border:1.5px solid var(--risco);border-radius:3px;font-size:14px;line-height:1.45}
   .erro[hidden]{display:none}
+  .erro.aviso{border-color:var(--atencao-borda);background:var(--atencao-fundo);color:var(--atencao-texto)}
+  .link-apagar{align-self:center;min-height:44px;padding:0 12px;border:0;background:none;color:var(--risco);font:600 15px var(--sans);text-decoration:underline;cursor:pointer}
   .visivel-so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 
@@ -145,8 +147,8 @@
   .st.sem{border-style:dashed;border-color:var(--cinza);color:var(--cinza);background:var(--cartao)}
   .barra{height:8px;border:1px solid var(--tinta);border-radius:1px;background:var(--cartao);overflow:hidden}
   .barra i{display:block;height:100%}
-  .cat-info{font:500 12px var(--mono);color:var(--cinza)}
-  button.cat .cat-info{color:var(--cobalto)}
+  .cat-info{font:500 12px/1.5 var(--mono);color:var(--cinza);white-space:pre-line}
+  .cat-info.acao{color:var(--cobalto)}
   .aviso-cet{margin:0;font-size:12px;line-height:1.45;color:var(--cinza)}
 
   /* menu sanduíche */
@@ -336,20 +338,22 @@
       <p>Olhe o painel do carro e digite o número do odômetro.</p>
       <div class="campo"><label for="km-novo">Km de hoje</label><input id="km-novo" class="mono" inputmode="numeric" autocomplete="off"></div>
       <div class="erro" id="erro-km" role="alert" hidden></div>
-      <div class="acoes"><button class="botao secundario" type="button" data-fechar>Cancelar</button><button class="botao" type="submit">Salvar</button></div>
+      <div class="acoes"><button class="botao secundario" type="button" data-fechar>Cancelar</button><button class="botao" type="submit" id="btn-salvar-km">Salvar</button></div>
     </form>
   </dialog>
 
   <dialog id="dlg-ultima" aria-labelledby="dlg-ultima-titulo">
     <form method="dialog" id="form-ultima" novalidate>
       <h2 id="dlg-ultima-titulo"></h2>
-      <p>Informe quando foi feito pela última vez. Se não lembrar o km exato, use um valor aproximado.</p>
+      <p id="ultima-texto">Informe quando foi feito pela última vez. Se não lembrar o km exato, use um valor aproximado.</p>
       <div class="dupla">
         <div class="campo"><label for="ultima-data">Data</label><input id="ultima-data" type="date"></div>
         <div class="campo"><label for="ultima-km">Km na época</label><input id="ultima-km" class="mono" inputmode="numeric" autocomplete="off"></div>
       </div>
+      <p id="ultima-nota" hidden></p>
       <div class="erro" id="erro-ultima" role="alert" hidden></div>
-      <div class="acoes"><button class="botao secundario" type="button" data-fechar>Cancelar</button><button class="botao" type="submit">Salvar</button></div>
+      <div class="acoes"><button class="botao secundario" type="button" data-fechar>Cancelar</button><button class="botao" type="submit" id="btn-salvar-ultima">Salvar</button></div>
+      <button class="link-apagar" type="button" id="btn-apagar-ultima" hidden>Apagar este registro</button>
     </form>
   </dialog>
 </div>
@@ -390,7 +394,8 @@ function mostrar(nome){
   TELAS.forEach(t => { $('tela-' + t).hidden = (t !== nome); });
   window.scrollTo(0, 0);
 }
-function erro(id, msg){ const el = $(id); el.textContent = msg || ''; el.hidden = !msg; }
+function erro(id, msg){ const el = $(id); el.textContent = msg || ''; el.hidden = !msg; el.classList.remove('aviso'); }
+function avisar(id, msg){ erro(id, msg); $(id).classList.add('aviso'); }
 function formatarKm(v){ const n = String(v).replace(/\D/g, ''); return n ? Number(n).toLocaleString('pt-BR') : ''; }
 function lerKm(v){ const n = String(v).replace(/\D/g, ''); return n ? Number(n) : 0; }
 function limparPlaca(v){ return String(v).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7); }
@@ -619,16 +624,17 @@ function textoTempo(dias){
 }
 function textoInfo(st){
   if (st.codigo === 'sem') return 'toque para informar a última vez';
+  const ultima = 'última ' + fmtData(st.ult.data) + (st.ult.km ? ' · ' + num(st.ult.km) + ' km' : '');
   if (st.codigo === 'venc') {
     const p = [];
     if (st.kmFalta !== null && st.kmFalta < 0) p.push('passou ' + num(-st.kmFalta) + ' km do prazo');
     if (st.diasFalta !== null && st.diasFalta < 0) p.push('venceu há ' + textoTempo(-st.diasFalta));
-    return p.join(' · ') || 'no limite do prazo';
+    return (p.join(' · ') || 'no limite do prazo') + '\n' + ultima;
   }
   const p = [];
   if (st.kmFalta !== null) p.push(num(st.kmFalta) + ' km');
   if (st.diasFalta !== null) p.push(textoTempo(st.diasFalta));
-  return 'faltam ' + p.join(' ou ');
+  return 'faltam ' + p.join(' ou ') + '\n' + ultima;
 }
 const ROTULO_ST = { ok: '● EM DIA', aten: '▲ ATENÇÃO', venc: '◆ VENCIDO', sem: 'SEM REGISTRO' };
 const COR_BARRA = { ok: 'var(--ok-borda)', aten: 'var(--atencao-borda)', venc: 'var(--mal-borda)', sem: 'transparent' };
@@ -705,15 +711,14 @@ function desenharPainel(){
 
   $('lista-cats').innerHTML = linhas.map(({ c, ap, st }) => {
     const pct = Math.min(Math.max(st.frac, 0), 1) * 100;
-    const tag = st.codigo === 'sem' ? 'button' : 'div';
-    const extra = st.codigo === 'sem' ? ' type="button" data-ultima="' + c.id + '" aria-label="' + esc(c.nome) + ': sem registro. Informar a última vez"' : '';
-    return '<li><' + tag + ' class="cat"' + extra + '>' +
+    const rotulo = st.codigo === 'sem' ? ': sem registro. Informar a última vez' : ': ' + ROTULO_ST[st.codigo].replace(/[●▲◆] /, '').toLowerCase() + '. Editar a última vez';
+    return '<li><button class="cat" type="button" data-ultima="' + c.id + '" aria-label="' + esc(c.nome + rotulo) + '">' +
       '<span class="el" aria-hidden="true" style="border-color:' + ap.cor + ';background:' + ap.fundo + ';color:' + ap.cor + '"><small>' + ap.n + '</small><b>' + esc(ap.sim) + '</b></span>' +
       '<span class="cat-corpo">' +
         '<span class="cat-linha"><b>' + esc(c.nome) + '</b><span class="st ' + st.codigo + '">' + ROTULO_ST[st.codigo] + '</span></span>' +
         '<span class="barra" role="img" aria-label="' + Math.round(pct) + '% do prazo usado"><i style="width:' + pct.toFixed(0) + '%;background:' + COR_BARRA[st.codigo] + '"></i></span>' +
-        '<span class="cat-info">' + esc(textoInfo(st)) + '</span>' +
-      '</span></' + tag + '></li>';
+        '<span class="cat-info' + (st.codigo === 'sem' ? ' acao' : '') + '">' + esc(textoInfo(st)) + '</span>' +
+      '</span></button></li>';
   }).join('') || '<li class="cat-info" style="padding:12px 0">Nenhum item de manutenção. Em breve dá para criar novos aqui.</li>';
 }
 
@@ -769,8 +774,11 @@ $('btn-sair').addEventListener('click', async () => { $('menu').hidden = true; a
 document.querySelectorAll('dialog [data-fechar]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
 ['km-novo', 'ultima-km'].forEach(id => $(id).addEventListener('input', e => { e.target.value = formatarKm(e.target.value); }));
 
+let kmBaixoConfirmado = null;   // km menor já avisado uma vez
+function resetarKm(){ kmBaixoConfirmado = null; $('btn-salvar-km').textContent = 'Salvar'; }
+$('km-novo').addEventListener('input', () => { if (kmBaixoConfirmado !== null) { resetarKm(); erro('erro-km'); } });
 $('btn-km').addEventListener('click', () => {
-  erro('erro-km');
+  erro('erro-km'); resetarKm();
   $('km-novo').value = formatarKm(painel.carro.km_atual || '');
   $('dlg-km').showModal();
   $('km-novo').select();
@@ -781,15 +789,27 @@ $('form-km').addEventListener('submit', async (e) => {
   const km = lerKm($('km-novo').value);
   const atual = painel.carro.km_atual || 0;
   if (!km) { erro('erro-km', 'Digite o km do odômetro.'); return; }
-  if (km < atual) { erro('erro-km', 'O número é menor que o km atual (' + num(atual) + '). Confira o odômetro.'); return; }
+  if (km < atual && kmBaixoConfirmado !== km) {
+    kmBaixoConfirmado = km;
+    avisar('erro-km', '▲ Esse número é menor que o km salvo (' + num(atual) + '). Se o anterior estava errado, toque em "Salvar mesmo assim".');
+    $('btn-salvar-km').textContent = 'Salvar mesmo assim';
+    return;
+  }
   const hoje = hojeStr();
   const btn = e.submitter || $('form-km').querySelector('[type=submit]');
   btn.disabled = true;
   try {
     const { error: e1 } = await sb.from('carros').update({ km_atual: km, km_atual_data: hoje, atualizado_em: new Date().toISOString() }).eq('id', painel.carro.id);
     if (e1) throw e1;
+    if (km < atual) {
+      // corrigindo para baixo: os registros de km maiores eram erro de digitação
+      const { error: e0 } = await sb.from('km_registros').update({ apagado_em: new Date().toISOString(), atualizado_em: new Date().toISOString() })
+        .eq('carro_id', painel.carro.id).is('apagado_em', null).gt('km', km);
+      if (e0) throw e0;
+    }
     const { error: e2 } = await sb.from('km_registros').insert({ carro_id: painel.carro.id, data: hoje, km });
     if (e2) throw e2;
+    resetarKm();
     $('dlg-km').close();
     await carregarPainel(painel.carro.id, true);
     marcarSalvo();
@@ -799,16 +819,35 @@ $('form-km').addEventListener('submit', async (e) => {
   } finally { btn.disabled = false; }
 });
 
-let catUltima = null;
+let catUltima = null, servicoEditando = null, kmAltoConfirmado = null;
+function resetarUltima(){ kmAltoConfirmado = null; $('btn-salvar-ultima').textContent = 'Salvar'; }
+['ultima-km', 'ultima-data'].forEach(id => $(id).addEventListener('input', () => { if (kmAltoConfirmado !== null) { resetarUltima(); erro('erro-ultima'); } }));
 $('lista-cats').addEventListener('click', (e) => {
   const b = e.target.closest('[data-ultima]');
   if (!b) return;
   catUltima = painel.cats.find(c => c.id === b.dataset.ultima);
-  erro('erro-ultima');
-  $('dlg-ultima-titulo').textContent = 'Última vez: ' + catUltima.nome;
-  $('ultima-data').value = '';
+  const st = calcularStatus(catUltima, painel.carro, painel.servicos, paraData(hojeStr()));
+  servicoEditando = st.ult || null;
+  erro('erro-ultima'); resetarUltima();
   $('ultima-data').max = hojeStr();
-  $('ultima-km').value = '';
+  if (servicoEditando) {
+    $('dlg-ultima-titulo').textContent = 'Editar última vez: ' + catUltima.nome;
+    $('ultima-texto').textContent = 'Corrija a data ou o km do último registro deste item.';
+    $('ultima-data').value = servicoEditando.data;
+    $('ultima-km').value = servicoEditando.km ? formatarKm(servicoEditando.km) : '';
+    const outros = (servicoEditando.categoria_ids || []).filter(id => id !== catUltima.id)
+      .map(id => (painel.cats.find(c => c.id === id) || {}).nome).filter(Boolean);
+    $('ultima-nota').textContent = outros.length ? 'Este registro também vale para: ' + outros.join(', ') + '. A mudança vale para todos.' : '';
+    $('ultima-nota').hidden = !outros.length;
+    $('btn-apagar-ultima').hidden = false;
+  } else {
+    $('dlg-ultima-titulo').textContent = 'Última vez: ' + catUltima.nome;
+    $('ultima-texto').textContent = 'Informe quando foi feito pela última vez. Se não lembrar o km exato, use um valor aproximado.';
+    $('ultima-data').value = '';
+    $('ultima-km').value = '';
+    $('ultima-nota').hidden = true;
+    $('btn-apagar-ultima').hidden = true;
+  }
   $('dlg-ultima').showModal();
 });
 $('form-ultima').addEventListener('submit', async (e) => {
@@ -820,15 +859,21 @@ $('form-ultima').addEventListener('submit', async (e) => {
   if (!data) { erro('erro-ultima', 'Informe a data (pode ser aproximada).'); return; }
   if (data > hojeStr()) { erro('erro-ultima', 'A data não pode ser no futuro.'); return; }
   if (catUltima.intervalo_km && !km) { erro('erro-ultima', 'Informe o km na época (pode ser aproximado).'); return; }
-  if (km > atual) { erro('erro-ultima', 'O km da época não pode ser maior que o atual (' + num(atual) + ').'); return; }
-  const btn = e.submitter || $('form-ultima').querySelector('[type=submit]');
+  if (km > atual && kmAltoConfirmado !== km) {
+    kmAltoConfirmado = km;
+    avisar('erro-ultima', '▲ Esse km é maior que o km atual do carro (' + num(atual) + '). Se estiver certo, toque em "Salvar mesmo assim" e depois atualize o km do carro.');
+    $('btn-salvar-ultima').textContent = 'Salvar mesmo assim';
+    return;
+  }
+  const btn = $('btn-salvar-ultima');
   btn.disabled = true;
   try {
-    const { error } = await sb.from('servicos').insert({
-      carro_id: painel.carro.id, data, km, categoria_ids: [catUltima.id],
-      observacao: 'Última vez informada no painel'
-    });
+    const agora = new Date().toISOString();
+    const { error } = servicoEditando
+      ? await sb.from('servicos').update({ data, km, atualizado_em: agora }).eq('id', servicoEditando.id)
+      : await sb.from('servicos').insert({ carro_id: painel.carro.id, data, km, categoria_ids: [catUltima.id], observacao: 'Última vez informada no painel' });
     if (error) throw error;
+    resetarUltima();
     $('dlg-ultima').close();
     await carregarPainel(painel.carro.id, true);
     marcarSalvo();
@@ -837,6 +882,23 @@ $('form-ultima').addEventListener('submit', async (e) => {
     erro('erro-ultima', 'Não deu para salvar agora. Confira a internet e tente de novo.');
   } finally { btn.disabled = false; }
 });
+$('btn-apagar-ultima').addEventListener('click', async () => {
+  if (!servicoEditando) return;
+  if (!confirmarApagar) { confirmarApagar = true; $('btn-apagar-ultima').textContent = 'Toque de novo para apagar'; return; }
+  try {
+    const agora = new Date().toISOString();
+    const { error } = await sb.from('servicos').update({ apagado_em: agora, atualizado_em: agora }).eq('id', servicoEditando.id);
+    if (error) throw error;
+    $('dlg-ultima').close();
+    await carregarPainel(painel.carro.id, true);
+    marcarSalvo();
+  } catch (err) {
+    console.error(err);
+    erro('erro-ultima', 'Não deu para apagar agora. Confira a internet e tente de novo.');
+  }
+});
+let confirmarApagar = false;
+$('dlg-ultima').addEventListener('close', () => { confirmarApagar = false; $('btn-apagar-ultima').textContent = 'Apagar este registro'; });
 
 /* ---------- início ---------- */
 let decidido = false;
