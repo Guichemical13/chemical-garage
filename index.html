@@ -85,6 +85,94 @@
   .erro[hidden]{display:none}
   .visivel-so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
+
+  /* ===== Painel ===== */
+  :root{
+    --ok-borda:#137336; --ok-fundo:#DCF2E3; --ok-texto:#0E5A2A;
+    --mal-borda:#B3261E; --mal-fundo:#FADBD8; --mal-texto:#8E1B15;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ok-borda:#4CBF74; --ok-fundo:#11291A; --ok-texto:#8FE0AA;
+      --mal-borda:#FF8A80; --mal-fundo:#3A1614; --mal-texto:#FFB4AB;
+    }
+  }
+  .app{min-height:100dvh;max-width:560px;margin:0 auto;display:flex;flex-direction:column}
+  .topo{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;
+        padding:calc(10px + env(safe-area-inset-top)) 16px 10px 8px;border-bottom:1px solid var(--linha);background:var(--papel)}
+  .topo-esq{display:flex;align-items:center;gap:8px;min-width:0}
+  .icone{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;cursor:pointer;flex:none;color:var(--tinta)}
+  .mini-simbolo{width:34px;height:34px;border:2px solid var(--tinta);border-radius:3px;display:grid;place-items:center;background:var(--cartao);font:800 16px/1 var(--sans);flex:none}
+  .topo-nome{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .topo-nome b{font:800 16px/1.1 var(--sans);letter-spacing:-.01em;white-space:nowrap}
+  .topo-nome small{font:500 11px var(--mono);color:var(--ok-borda);min-height:13px}
+  .placa{display:flex;flex-direction:column;border:1.5px solid var(--tinta);border-radius:3px;overflow:hidden;background:var(--cartao);flex:none}
+  .placa i{height:5px;background:var(--cobalto)}
+  .placa span{font:600 13px var(--mono);padding:3px 8px;letter-spacing:.06em}
+  .conteudo{flex:1;padding:18px 16px calc(32px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px}
+  .titulo-carro h1{font-size:26px;line-height:1.1;letter-spacing:-.02em}
+  .titulo-carro span{font:500 13px var(--mono);color:var(--cinza)}
+  .cartao{padding:14px 16px;border:1.5px solid var(--tinta);background:var(--cartao);border-radius:3px;display:flex;flex-direction:column;gap:8px}
+  .cartao.alerta{border-color:var(--mal-borda);background:var(--mal-fundo)}
+  .cartao.leve{border:1px solid var(--linha)}
+  .cab-cartao{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .etq{font:600 12px var(--mono);letter-spacing:.08em;color:var(--cinza)}
+  .alerta .etq{color:var(--mal-texto)}
+  .tarja{font:600 12px var(--mono);padding:4px 8px;background:var(--mal-borda);color:#FFFFFF;border-radius:2px}
+  .grande-linha{font:800 20px/1.15 var(--sans)}
+  .sub{font:500 13px var(--mono);color:var(--tinta2)}
+  .odo{display:flex;align-items:baseline;gap:8px}
+  .odo b{font:500 36px/1 var(--mono);letter-spacing:-.02em}
+  .odo span{font:500 16px var(--mono);color:var(--cinza)}
+  .linha-odo{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .linha-odo p{margin:0;font-size:13px;line-height:1.4;color:var(--cinza)}
+  .botao-mini{min-height:44px;padding:0 14px;border:1.5px solid var(--tinta);border-radius:3px;background:var(--papel);font:600 14px var(--sans);cursor:pointer;flex:none}
+  .cab-lista{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+  .cab-lista small{font:500 12px var(--mono);color:var(--cinza)}
+  .lista{display:flex;flex-direction:column;border-top:1px solid var(--linha);margin:0;padding:0;list-style:none}
+  .cat{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--linha);background:none;text-align:left;width:100%;color:var(--tinta)}
+  button.cat{cursor:pointer}
+  .cat .el{width:48px;height:48px;border:1.5px solid;border-radius:3px;position:relative;display:grid;place-items:center}
+  .cat .el small{position:absolute;top:2px;left:4px;font:500 9px var(--mono)}
+  .cat .el b{font:800 20px/1 var(--sans)}
+  .cat-corpo{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .cat-linha{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .cat-linha b{font:700 15px var(--sans);min-width:0}
+  .st{font:600 11px var(--mono);padding:3px 6px;border:1.5px solid;border-radius:2px;white-space:nowrap;flex:none}
+  .st.ok{border-color:var(--ok-borda);color:var(--ok-texto);background:var(--ok-fundo)}
+  .st.aten{border-color:var(--atencao-borda);color:var(--atencao-texto);background:var(--atencao-fundo)}
+  .st.venc{border-color:var(--mal-borda);color:var(--mal-texto);background:var(--mal-fundo)}
+  .st.sem{border-style:dashed;border-color:var(--cinza);color:var(--cinza);background:var(--cartao)}
+  .barra{height:8px;border:1px solid var(--tinta);border-radius:1px;background:var(--cartao);overflow:hidden}
+  .barra i{display:block;height:100%}
+  .cat-info{font:500 12px var(--mono);color:var(--cinza)}
+  button.cat .cat-info{color:var(--cobalto)}
+  .aviso-cet{margin:0;font-size:12px;line-height:1.45;color:var(--cinza)}
+
+  /* menu sanduíche */
+  .menu{position:fixed;inset:0;z-index:20;display:flex}
+  .menu nav{width:min(300px,82vw);height:100%;background:var(--papel);border-right:1.5px solid var(--tinta);display:flex;flex-direction:column;
+            padding:calc(12px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));gap:14px;overflow-y:auto}
+  .menu .fundo{flex:1;border:0;background:rgba(14,16,19,.5);cursor:pointer}
+  .menu-item{display:flex;align-items:center;gap:12px;min-height:52px;padding:4px 8px;border:0;border-radius:3px;background:none;color:var(--tinta);text-align:left;width:100%}
+  .menu-item[aria-current="page"]{background:var(--tinta);color:var(--papel)}
+  .menu-item:disabled{opacity:.6}
+  .menu-item .el{width:40px;height:40px;border:1.5px solid currentColor;border-radius:2px;position:relative;display:grid;place-items:center;flex:none}
+  .menu-item .el small{position:absolute;top:2px;left:4px;font:500 8px var(--mono)}
+  .menu-item .el b{font:800 17px/1 var(--sans)}
+  .menu-item span{font:600 16px var(--sans)}
+  .menu-item em{margin-left:auto;font:500 11px var(--mono);font-style:normal;color:var(--cinza)}
+  .menu-rodape{margin-top:auto;padding-top:12px;border-top:1px solid var(--linha);display:flex;flex-direction:column;gap:10px}
+  .menu-rodape b{font:600 14px var(--sans)}
+  .menu-rodape small{font:500 12px var(--mono);color:var(--cinza);word-break:break-all}
+
+  /* janelas (atualizar km, última vez) */
+  dialog{width:min(420px,calc(100vw - 32px));border:1.5px solid var(--tinta);border-radius:4px;padding:20px;background:var(--papel);color:var(--tinta)}
+  dialog::backdrop{background:rgba(14,16,19,.55)}
+  dialog form{gap:14px}
+  dialog h2{margin:0;font:800 22px/1.15 var(--sans);letter-spacing:-.01em}
+  dialog p{margin:0;font-size:14px;line-height:1.45;color:var(--tinta2)}
+
   /* ===== Erlenmeyer ===== */
   .liquido{fill:var(--cobalto);transition:transform .7s cubic-bezier(.3,.7,.3,1)}
   .contorno{fill:none;stroke:var(--tinta);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
@@ -200,17 +288,71 @@
   </div>
 </main>
 
-<!-- ============ PAINEL (provisório até a próxima etapa) ============ -->
-<main class="tela" id="tela-painel" hidden>
-  <div class="marca"><div class="simbolo"><small>01</small><b>Cg</b></div><span>Chemical Garage</span></div>
-  <span class="selo selo-beta">LOGIN FUNCIONANDO</span>
-  <h1 id="painel-titulo"></h1>
-  <p class="texto" id="painel-resumo"></p>
-  <p class="texto">O painel completo vem na próxima etapa da fase 2. Por enquanto esta tela só confirma que o login e o cadastro gravaram no banco.</p>
-  <div class="rodape">
-    <button class="botao secundario" id="btn-sair" type="button">Sair</button>
+<!-- ============ PAINEL ============ -->
+<div class="app" id="tela-painel" hidden>
+  <header class="topo">
+    <div class="topo-esq">
+      <button class="icone" id="btn-menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <span class="mini-simbolo" aria-hidden="true">Cg</span>
+      <span class="topo-nome"><b>Chemical Garage</b><small id="salvo" aria-live="polite"></small></span>
+    </div>
+    <span class="placa" id="placa-topo" aria-label="Placa"><i></i><span></span></span>
+  </header>
+
+  <main class="conteudo">
+    <div class="titulo-carro"><h1 id="carro-nome"></h1><span id="carro-modelo"></span></div>
+    <section id="card-rodizio" aria-label="Rodízio"></section>
+    <section class="cartao" aria-label="Odômetro">
+      <span class="etq">ODÔMETRO</span>
+      <div class="odo"><b id="odo-km">0</b><span>km</span></div>
+      <div class="linha-odo"><p id="odo-info"></p><button class="botao-mini" id="btn-km" type="button">Atualizar km</button></div>
+    </section>
+    <div class="cab-lista"><span class="etq">PRÓXIMAS MANUTENÇÕES</span><small id="resumo-status"></small></div>
+    <ul class="lista" id="lista-cats"></ul>
+    <p class="aviso-cet">O aviso de rodízio é informativo e não considera feriados nem mudanças da Prefeitura. Na dúvida, confirme com a CET.</p>
+  </main>
+
+  <div class="menu" id="menu" hidden>
+    <nav aria-label="Menu">
+      <div class="cab-cartao"><span class="etq">MENU</span>
+        <button class="icone" id="btn-fechar-menu" type="button" aria-label="Fechar menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div id="menu-itens" style="display:flex;flex-direction:column;gap:4px"></div>
+      <div class="menu-rodape">
+        <b id="menu-carro"></b><small id="menu-email"></small>
+        <button class="botao secundario" id="btn-sair" type="button">Sair</button>
+      </div>
+    </nav>
+    <button class="fundo" id="fundo-menu" type="button" aria-label="Fechar menu"></button>
   </div>
-</main>
+
+  <dialog id="dlg-km" aria-labelledby="dlg-km-titulo">
+    <form method="dialog" id="form-km" novalidate>
+      <h2 id="dlg-km-titulo">Atualizar km</h2>
+      <p>Olhe o painel do carro e digite o número do odômetro.</p>
+      <div class="campo"><label for="km-novo">Km de hoje</label><input id="km-novo" class="mono" inputmode="numeric" autocomplete="off"></div>
+      <div class="erro" id="erro-km" role="alert" hidden></div>
+      <div class="acoes"><button class="botao secundario" type="button" data-fechar>Cancelar</button><button class="botao" type="submit">Salvar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-ultima" aria-labelledby="dlg-ultima-titulo">
+    <form method="dialog" id="form-ultima" novalidate>
+      <h2 id="dlg-ultima-titulo"></h2>
+      <p>Informe quando foi feito pela última vez. Se não lembrar o km exato, use um valor aproximado.</p>
+      <div class="dupla">
+        <div class="campo"><label for="ultima-data">Data</label><input id="ultima-data" type="date"></div>
+        <div class="campo"><label for="ultima-km">Km na época</label><input id="ultima-km" class="mono" inputmode="numeric" autocomplete="off"></div>
+      </div>
+      <div class="erro" id="erro-ultima" role="alert" hidden></div>
+      <div class="acoes"><button class="botao secundario" type="button" data-fechar>Cancelar</button><button class="botao" type="submit">Salvar</button></div>
+    </form>
+  </dialog>
+</div>
 
 <script>
 /* ==========================================================
@@ -325,7 +467,6 @@ $('btn-outra-conta').addEventListener('click', async () => {
   await sb.auth.signOut();
   entrarComGoogle(true);
 });
-$('btn-sair').addEventListener('click', async () => { await sb.auth.signOut(); mostrar('entrar'); });
 
 /* ---------- decide para onde a pessoa vai depois do login ---------- */
 async function decidirTela(sessao){
@@ -353,13 +494,7 @@ async function decidirTela(sessao){
     encherFrasco('etapa1', 0, 0.5);
     return;
   }
-  abrirPainel(carros[0]);
-}
-
-function abrirPainel(carro){
-  $('painel-titulo').textContent = carro.nome || 'Seu carro';
-  $('painel-resumo').textContent = [carro.placa, (carro.km_atual || 0).toLocaleString('pt-BR') + ' km'].filter(Boolean).join(' · ');
-  mostrar('painel');
+  carregarPainel(carros[0].id);
 }
 
 /* ---------- etapas do primeiro acesso ---------- */
@@ -418,13 +553,289 @@ $('btn-comecar').addEventListener('click', async () => {
     }
     await sb.from('ajustes').upsert({ user_id: usuario.id }, { onConflict: 'user_id', ignoreDuplicates: true });
 
-    abrirPainel(carro);
+    carregarPainel(carro.id);
   } catch (e) {
     console.error(e);
     erro('erro-etapa2', 'Não deu para salvar agora. Confira a internet e toque em "Começar" de novo.');
   } finally {
     btn.disabled = false; btn.textContent = 'Começar';
   }
+});
+
+/* ==========================================================
+   PAINEL
+   ========================================================== */
+const ATENCAO_A_PARTIR = 0.8;          // 80% do prazo
+const DIA_MS = 86400000;
+const MES_DIAS = 30.4;
+const DIAS_SEMANA = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+const DIA_DO_FINAL = { 1:1, 2:1, 3:2, 4:2, 5:3, 6:3, 7:4, 8:4, 9:5, 0:5 }; // 1 = segunda
+let painel = null;                      // { carro, cats, servicos, kms }
+
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function hojeStr(){ const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+function paraData(s){ const [a, m, d] = s.split('-').map(Number); return new Date(a, m - 1, d); }
+function fmtData(s){ const [a, m, d] = s.split('-'); return d + '/' + m + '/' + a; }
+function diasEntre(a, b){ return Math.round((b - a) / DIA_MS); }
+function num(n){ return Math.round(n).toLocaleString('pt-BR'); }
+function plural(n, um, varios){ return n + ' ' + (n === 1 ? um : varios); }
+
+/* Aparência de cada item: pelos padrões; itens criados depois ganham cinza */
+function aparencia(cat, i){
+  const p = ITENS_PADRAO.find(x => x.nome === cat.nome);
+  const n = String(cat.ordem || i + 1).padStart(2, '0');
+  if (p) return { n, sim: p.sim, cor: p.cor, fundo: p.fundo };
+  const sim = (cat.nome.replace(/[^A-Za-zÀ-ú]/g, '').slice(0, 2) || '??');
+  return { n, sim: sim[0].toUpperCase() + (sim[1] || '').toLowerCase(), cor: '#54504B', fundo: '#E8E6E3' };
+}
+
+/* Mesmo cálculo do app atual: vale o que vencer primeiro, km ou tempo */
+function calcularStatus(cat, carro, servicos, hoje){
+  const feitos = servicos.filter(s => (s.categoria_ids || []).includes(cat.id))
+    .sort((a, b) => a.data < b.data ? -1 : a.data > b.data ? 1 : (a.km - b.km));
+  if (!feitos.length) return { codigo: 'sem', frac: 0 };
+  const ult = feitos[feitos.length - 1];
+  const kmAtual = carro.km_atual || 0;
+  let fracKm = null, fracTempo = null, kmFalta = null, diasFalta = null;
+  if (cat.intervalo_km) {
+    fracKm = (kmAtual - ult.km) / cat.intervalo_km;
+    kmFalta = ult.km + cat.intervalo_km - kmAtual;
+  }
+  if (cat.intervalo_meses) {
+    const inicio = paraData(ult.data);
+    const prazoMs = cat.intervalo_meses * MES_DIAS * DIA_MS;
+    fracTempo = (hoje - inicio) / prazoMs;
+    diasFalta = diasEntre(hoje, new Date(inicio.getTime() + prazoMs));
+  }
+  const fracs = [fracKm, fracTempo].filter(f => f !== null);
+  const frac = fracs.length ? Math.max(...fracs) : 0;
+  const codigo = frac >= 1 ? 'venc' : frac >= ATENCAO_A_PARTIR ? 'aten' : 'ok';
+  return { codigo, frac, kmFalta, diasFalta, ult };
+}
+
+function textoTempo(dias){
+  if (dias >= 60) return plural(Math.round(dias / MES_DIAS), 'mês', 'meses');
+  return plural(dias, 'dia', 'dias');
+}
+function textoInfo(st){
+  if (st.codigo === 'sem') return 'toque para informar a última vez';
+  if (st.codigo === 'venc') {
+    const p = [];
+    if (st.kmFalta !== null && st.kmFalta < 0) p.push('passou ' + num(-st.kmFalta) + ' km do prazo');
+    if (st.diasFalta !== null && st.diasFalta < 0) p.push('venceu há ' + textoTempo(-st.diasFalta));
+    return p.join(' · ') || 'no limite do prazo';
+  }
+  const p = [];
+  if (st.kmFalta !== null) p.push(num(st.kmFalta) + ' km');
+  if (st.diasFalta !== null) p.push(textoTempo(st.diasFalta));
+  return 'faltam ' + p.join(' ou ');
+}
+const ROTULO_ST = { ok: '● EM DIA', aten: '▲ ATENÇÃO', venc: '◆ VENCIDO', sem: 'SEM REGISTRO' };
+const COR_BARRA = { ok: 'var(--ok-borda)', aten: 'var(--atencao-borda)', venc: 'var(--mal-borda)', sem: 'transparent' };
+
+/* Média de km por mês (precisa de 2 pontos com 20+ dias de distância) */
+function kmPorMes(){
+  const pts = painel.kms.map(k => ({ data: k.data, km: k.km }))
+    .concat(painel.servicos.map(s => ({ data: s.data, km: s.km })))
+    .filter(p => p.km > 0).sort((a, b) => a.data < b.data ? -1 : 1);
+  if (pts.length < 2) return null;
+  const a = pts[0], b = pts[pts.length - 1];
+  const dias = diasEntre(paraData(a.data), paraData(b.data));
+  if (dias < 20 || b.km <= a.km) return null;
+  return (b.km - a.km) / (dias / MES_DIAS);
+}
+
+function cartaoRodizio(carro, hoje){
+  const el = $('card-rodizio');
+  const isencaoValida = carro.rodizio_isento && carro.rodizio_isento_ate && carro.rodizio_isento_ate >= hojeStr();
+  if (carro.rodizio_nao_se_aplica) { el.className = 'cartao leve'; el.innerHTML = '<span class="etq">RODÍZIO</span><span class="sub">Sua cidade não tem rodízio. Nada a avisar.</span>'; return; }
+  if (isencaoValida) { el.className = 'cartao leve'; el.innerHTML = '<span class="etq">RODÍZIO</span><span class="sub">Isento até ' + fmtData(carro.rodizio_isento_ate) + '.</span>'; return; }
+  if (carro.rodizio_cidade !== 'sp') { el.className = 'cartao leve'; el.innerHTML = '<span class="etq">RODÍZIO</span><span class="sub">Regra manual: você vai poder definir os dias em Ajustes.</span>'; return; }
+  const final = (carro.placa || '').slice(-1);
+  if (!/\d/.test(final)) { el.className = 'cartao leve'; el.innerHTML = '<span class="etq">RODÍZIO</span><span class="sub">Cadastre a placa para ver o dia do rodízio.</span>'; return; }
+  const dia = DIA_DO_FINAL[final];
+  const venceuIsencao = carro.rodizio_isento ? '<span class="sub">A isenção venceu em ' + fmtData(carro.rodizio_isento_ate) + '.</span>' : '';
+  if (hoje.getDay() === dia) {
+    el.className = 'cartao alerta';
+    el.innerHTML = '<div class="cab-cartao"><span class="etq">◆ RODÍZIO HOJE</span><span class="tarja">NÃO CIRCULA</span></div>' +
+      '<span class="grande-linha">' + DIAS_SEMANA[dia] + ' · final ' + final + '</span>' +
+      '<span class="sub">7h–10h e 17h–20h · centro expandido</span>' + venceuIsencao;
+  } else {
+    const falta = (dia - hoje.getDay() + 7) % 7;
+    el.className = 'cartao leve';
+    el.innerHTML = '<span class="etq">PRÓXIMO RODÍZIO</span>' +
+      '<span class="grande-linha">' + DIAS_SEMANA[dia] + ' · final ' + final + '</span>' +
+      '<span class="sub">' + (falta === 1 ? 'amanhã' : 'em ' + falta + ' dias') + ' · 7h–10h e 17h–20h</span>' + venceuIsencao;
+  }
+}
+
+function desenharPainel(){
+  const { carro, cats, servicos } = painel;
+  const hoje = paraData(hojeStr());
+  $('carro-nome').textContent = carro.nome || 'Seu carro';
+  $('carro-modelo').textContent = carro.modelo || '';
+  $('placa-topo').hidden = !carro.placa;
+  $('placa-topo').querySelector('span').textContent = carro.placa || '';
+  $('menu-carro').textContent = [carro.nome, carro.placa].filter(Boolean).join(' · ');
+  $('menu-email').textContent = (usuario && usuario.email) || '';
+  cartaoRodizio(carro, hoje);
+
+  $('odo-km').textContent = num(carro.km_atual || 0);
+  const info = [];
+  if (carro.km_atual_data) {
+    const d = diasEntre(paraData(carro.km_atual_data), hoje);
+    info.push(d <= 0 ? 'atualizado hoje' : d === 1 ? 'atualizado ontem' : 'atualizado há ' + d + ' dias');
+  }
+  const media = kmPorMes();
+  info.push(media ? 'média de ' + num(media) + ' km/mês' : 'a média aparece com mais registros');
+  $('odo-info').innerHTML = info.map(esc).join('<br>');
+
+  const ordem = { venc: 0, aten: 1, ok: 2, sem: 3 };
+  const linhas = cats.map((c, i) => ({ c, ap: aparencia(c, i), st: calcularStatus(c, carro, servicos, hoje) }))
+    .sort((a, b) => ordem[a.st.codigo] - ordem[b.st.codigo] || b.st.frac - a.st.frac);
+
+  const nV = linhas.filter(l => l.st.codigo === 'venc').length;
+  const nA = linhas.filter(l => l.st.codigo === 'aten').length;
+  const nS = linhas.filter(l => l.st.codigo === 'sem').length;
+  const resumo = [];
+  if (nV) resumo.push(plural(nV, 'vencida', 'vencidas'));
+  if (nA) resumo.push(nA + ' atenção');
+  if (nS) resumo.push(nS + ' sem registro');
+  $('resumo-status').textContent = resumo.join(' · ') || (cats.length ? 'tudo em dia' : '');
+
+  $('lista-cats').innerHTML = linhas.map(({ c, ap, st }) => {
+    const pct = Math.min(Math.max(st.frac, 0), 1) * 100;
+    const tag = st.codigo === 'sem' ? 'button' : 'div';
+    const extra = st.codigo === 'sem' ? ' type="button" data-ultima="' + c.id + '" aria-label="' + esc(c.nome) + ': sem registro. Informar a última vez"' : '';
+    return '<li><' + tag + ' class="cat"' + extra + '>' +
+      '<span class="el" aria-hidden="true" style="border-color:' + ap.cor + ';background:' + ap.fundo + ';color:' + ap.cor + '"><small>' + ap.n + '</small><b>' + esc(ap.sim) + '</b></span>' +
+      '<span class="cat-corpo">' +
+        '<span class="cat-linha"><b>' + esc(c.nome) + '</b><span class="st ' + st.codigo + '">' + ROTULO_ST[st.codigo] + '</span></span>' +
+        '<span class="barra" role="img" aria-label="' + Math.round(pct) + '% do prazo usado"><i style="width:' + pct.toFixed(0) + '%;background:' + COR_BARRA[st.codigo] + '"></i></span>' +
+        '<span class="cat-info">' + esc(textoInfo(st)) + '</span>' +
+      '</span></' + tag + '></li>';
+  }).join('') || '<li class="cat-info" style="padding:12px 0">Nenhum item de manutenção. Em breve dá para criar novos aqui.</li>';
+}
+
+async function carregarPainel(carroId, silencioso){
+  if (!silencioso) mostrar('carregando');
+  try {
+    const [r1, r2, r3, r4] = await Promise.all([
+      sb.from('carros').select('*').eq('id', carroId).single(),
+      sb.from('categorias').select('id, nome, intervalo_km, intervalo_meses, ordem').eq('carro_id', carroId).is('apagado_em', null).order('ordem'),
+      sb.from('servicos').select('id, data, km, categoria_ids').eq('carro_id', carroId).is('apagado_em', null),
+      sb.from('km_registros').select('data, km').eq('carro_id', carroId).is('apagado_em', null)
+    ]);
+    const falha = [r1, r2, r3, r4].find(r => r.error);
+    if (falha) throw falha.error;
+    painel = { carro: r1.data, cats: r2.data, servicos: r3.data, kms: r4.data };
+    desenharPainel();
+    mostrar('painel');
+  } catch (e) {
+    console.error(e);
+    mostrar('entrar');
+    erro('erro-entrar', 'Não conseguimos carregar o painel. Verifique a internet e tente de novo.');
+  }
+}
+function marcarSalvo(){
+  const h = new Date();
+  $('salvo').textContent = '✓ salvo · ' + String(h.getHours()).padStart(2, '0') + ':' + String(h.getMinutes()).padStart(2, '0');
+}
+
+/* ---------- menu sanduíche ---------- */
+const MENU = [
+  { n:'01', sim:'Pa', nome:'Painel', ativo:true },
+  { n:'02', sim:'Hi', nome:'Histórico' }, { n:'03', sim:'Cu', nome:'Custos' },
+  { n:'04', sim:'Do', nome:'Documentos' }, { n:'05', sim:'Rz', nome:'Rodízio' },
+  { n:'06', sim:'Av', nome:'Avisos' }, { n:'07', sim:'Aj', nome:'Ajustes' }
+];
+$('menu-itens').innerHTML = MENU.map(m =>
+  '<button class="menu-item" type="button"' + (m.ativo ? ' aria-current="page"' : ' disabled') + '>' +
+  '<span class="el" aria-hidden="true"><small>' + m.n + '</small><b>' + m.sim + '</b></span><span>' + m.nome + '</span>' +
+  (m.ativo ? '' : '<em>em breve</em>') + '</button>').join('');
+function abrirMenu(abrir){
+  $('menu').hidden = !abrir;
+  $('btn-menu').setAttribute('aria-expanded', abrir ? 'true' : 'false');
+  if (abrir) $('btn-fechar-menu').focus(); else $('btn-menu').focus();
+}
+$('btn-menu').addEventListener('click', () => abrirMenu(true));
+$('btn-fechar-menu').addEventListener('click', () => abrirMenu(false));
+$('fundo-menu').addEventListener('click', () => abrirMenu(false));
+$('menu').addEventListener('keydown', (e) => { if (e.key === 'Escape') abrirMenu(false); });
+$('menu-itens').addEventListener('click', (e) => { if (e.target.closest('[aria-current]')) abrirMenu(false); });
+$('btn-sair').addEventListener('click', async () => { $('menu').hidden = true; await sb.auth.signOut(); painel = null; mostrar('entrar'); });
+
+/* ---------- janelas ---------- */
+document.querySelectorAll('dialog [data-fechar]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+['km-novo', 'ultima-km'].forEach(id => $(id).addEventListener('input', e => { e.target.value = formatarKm(e.target.value); }));
+
+$('btn-km').addEventListener('click', () => {
+  erro('erro-km');
+  $('km-novo').value = formatarKm(painel.carro.km_atual || '');
+  $('dlg-km').showModal();
+  $('km-novo').select();
+});
+$('form-km').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  erro('erro-km');
+  const km = lerKm($('km-novo').value);
+  const atual = painel.carro.km_atual || 0;
+  if (!km) { erro('erro-km', 'Digite o km do odômetro.'); return; }
+  if (km < atual) { erro('erro-km', 'O número é menor que o km atual (' + num(atual) + '). Confira o odômetro.'); return; }
+  const hoje = hojeStr();
+  const btn = e.submitter || $('form-km').querySelector('[type=submit]');
+  btn.disabled = true;
+  try {
+    const { error: e1 } = await sb.from('carros').update({ km_atual: km, km_atual_data: hoje, atualizado_em: new Date().toISOString() }).eq('id', painel.carro.id);
+    if (e1) throw e1;
+    const { error: e2 } = await sb.from('km_registros').insert({ carro_id: painel.carro.id, data: hoje, km });
+    if (e2) throw e2;
+    $('dlg-km').close();
+    await carregarPainel(painel.carro.id, true);
+    marcarSalvo();
+  } catch (err) {
+    console.error(err);
+    erro('erro-km', 'Não deu para salvar agora. Confira a internet e tente de novo.');
+  } finally { btn.disabled = false; }
+});
+
+let catUltima = null;
+$('lista-cats').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-ultima]');
+  if (!b) return;
+  catUltima = painel.cats.find(c => c.id === b.dataset.ultima);
+  erro('erro-ultima');
+  $('dlg-ultima-titulo').textContent = 'Última vez: ' + catUltima.nome;
+  $('ultima-data').value = '';
+  $('ultima-data').max = hojeStr();
+  $('ultima-km').value = '';
+  $('dlg-ultima').showModal();
+});
+$('form-ultima').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  erro('erro-ultima');
+  const data = $('ultima-data').value;
+  const km = lerKm($('ultima-km').value);
+  const atual = painel.carro.km_atual || 0;
+  if (!data) { erro('erro-ultima', 'Informe a data (pode ser aproximada).'); return; }
+  if (data > hojeStr()) { erro('erro-ultima', 'A data não pode ser no futuro.'); return; }
+  if (catUltima.intervalo_km && !km) { erro('erro-ultima', 'Informe o km na época (pode ser aproximado).'); return; }
+  if (km > atual) { erro('erro-ultima', 'O km da época não pode ser maior que o atual (' + num(atual) + ').'); return; }
+  const btn = e.submitter || $('form-ultima').querySelector('[type=submit]');
+  btn.disabled = true;
+  try {
+    const { error } = await sb.from('servicos').insert({
+      carro_id: painel.carro.id, data, km, categoria_ids: [catUltima.id],
+      observacao: 'Última vez informada no painel'
+    });
+    if (error) throw error;
+    $('dlg-ultima').close();
+    await carregarPainel(painel.carro.id, true);
+    marcarSalvo();
+  } catch (err) {
+    console.error(err);
+    erro('erro-ultima', 'Não deu para salvar agora. Confira a internet e tente de novo.');
+  } finally { btn.disabled = false; }
 });
 
 /* ---------- início ---------- */
